@@ -31,25 +31,27 @@ function EconomicsTest() {
 
   const question = economicsQuestions[currentIndex];
 
-  const handleSubmit = () => {
-    let score = 0;
+const handleSubmit = () => {
+  let score = 0;
 
-    economicsQuestions.forEach((q) => {
-      if (answers[q.id] === q.answer) {
-        score++;
-      }
-    });
+  economicsQuestions.forEach((q) => {
+    if (answers[q.id] === q.answer) {
+      score++;
+    }
+  });
 
-    localStorage.removeItem("currentIndex");
-    localStorage.removeItem("answers");
+  localStorage.removeItem("currentIndex");
+  localStorage.removeItem("answers");
 
-    navigate("/result", {
-      state: {
-        score,
-        total: economicsQuestions.length,
-      },
-    });
-  };
+  navigate("/result", {
+    state: {
+      score,
+      total: economicsQuestions.length,
+      answers,
+      questions: economicsQuestions,
+    },
+  });
+};
 
   return (
     <div className="container mt-4">

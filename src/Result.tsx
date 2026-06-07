@@ -5,6 +5,8 @@ function Result() {
 
   const score = state?.score || 0;
   const total = state?.total || 0;
+  const answers = state?.answers || {};
+  const questions = state?.questions || [];
 
   let message = "";
 
@@ -20,16 +22,67 @@ function Result() {
   }
 
   return (
-    <div className="container mt-5 text-center">
-      <h1>Your Score</h1>
+    <div className="container mt-4">
+      <div className="text-center">
+        <h1>Your Score</h1>
 
-      <h2>
-        {score} / {total}
-      </h2>
+        <h2>
+          {score} / {total}
+        </h2>
 
-      <div className="alert alert-info mt-4">
-        {message}
+        <div className="alert alert-info mt-3">
+          {message}
+        </div>
       </div>
+
+      <hr />
+
+      <h3>Review Answers</h3>
+
+      {questions.map((q: any) => {
+        const isCorrect =
+          answers[q.id] === q.answer;
+
+        return (
+          <div
+            key={q.id}
+            className="card mt-3"
+          >
+            <div className="card-body">
+              <h5>
+                Q{q.id}. {q.question}
+              </h5>
+
+              <p>
+                <strong>Your Answer:</strong>{" "}
+                {answers[q.id] || "Not Answered"}
+              </p>
+
+              <p>
+                <strong>Correct Answer:</strong>{" "}
+                {q.answer}
+              </p>
+
+              {isCorrect ? (
+                <div className="alert alert-success">
+                  Correct ✅
+                </div>
+              ) : (
+                <div className="alert alert-danger">
+                  Wrong ❌
+                </div>
+              )}
+
+              {q.explanation && (
+                <div className="alert alert-warning">
+                  <strong>Explanation:</strong>{" "}
+                  {q.explanation}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
