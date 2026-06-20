@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { economicsQuestions } from "../data/economicsQuestions";
+import { geographicQuestions1 } from "../data/geographicQuestions1";
+import { geographicQuestions2 } from "../data/geographicQuestions2";
 
-function EconomicsTest() {
+function TestPage() {
   const navigate = useNavigate();
+
+  const questionBank = {
+    economics: economicsQuestions,
+    geography1: geographicQuestions1,
+    geography2: geographicQuestions2,
+  };
+
+  const { subject } = useParams();
+
+  const questions =
+    questionBank[
+      subject as keyof typeof questionBank
+    ] || [];
 
   const [currentIndex, setCurrentIndex] = useState(() => {
     const saved = localStorage.getItem("currentIndex");
@@ -29,37 +44,40 @@ function EconomicsTest() {
     );
   }, [answers]);
 
-  const question = economicsQuestions[currentIndex];
+  if (questions.length === 0) {
+    return <h2>Subject not found</h2>;
+  }
 
-const handleSubmit = () => {
-  let score = 0;
+  const question = questions[currentIndex];
 
-  economicsQuestions.forEach((q) => {
-    if (answers[q.id] === q.answer) {
-      score++;
-    }
-  });
+  const handleSubmit = () => {
+    let score = 0;
 
-  localStorage.removeItem("currentIndex");
-  localStorage.removeItem("answers");
+    questions.forEach((q) => {
+      if (answers[q.id] === q.answer) {
+        score++;
+      }
+    });
 
-  navigate("/result", {
-    state: {
-      score,
-      total: economicsQuestions.length,
-      answers,
-      questions: economicsQuestions,
-    },
-  });
-};
+    localStorage.removeItem("currentIndex");
+    localStorage.removeItem("answers");
+
+    navigate("/result", {
+      state: {
+        score,
+        total: questions.length,
+        answers,
+        questions,
+      },
+    });
+  };
 
   return (
     <div className="container mt-4">
-      <h2>Economics Test</h2>
+      <h2>{subject?.toUpperCase()} Test</h2>
 
       <p>
-        Question {currentIndex + 1} of{" "}
-        {economicsQuestions.length}
+        Question {currentIndex + 1} of {questions.length}
       </p>
 
       <div className="card">
@@ -105,8 +123,7 @@ const handleSubmit = () => {
           Previous
         </button>
 
-        {currentIndex <
-        economicsQuestions.length - 1 ? (
+        {currentIndex < questions.length - 1 ? (
           <button
             className="btn btn-primary"
             onClick={() =>
@@ -128,4 +145,4 @@ const handleSubmit = () => {
   );
 }
 
-export default EconomicsTest;
+export default TestPage;
